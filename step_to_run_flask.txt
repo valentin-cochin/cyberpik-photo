@@ -1,0 +1,6 @@
+Open command shell
+Type to create virtual env: python -m venv env 
+Type to the console to activate virtual environment : env/Scripts/activate.bat
+Check nothing is instaled: pip freeze
+Install all requirements: pip install -r requirements.txt
+Deactivate virtual environment in cmd : deactivate
