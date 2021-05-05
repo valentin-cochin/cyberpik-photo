@@ -39,8 +39,8 @@ class NeuralTransferStyle:
         self.style = None
         self.stylized = None
 
-    # @staticmethod
-    def load(self, image_path, target_size=None):
+    @staticmethod
+    def __load(image_path, target_size=None):
         """
         Loads an image as a numpy array and normalizes it from the given image path
 
@@ -76,12 +76,12 @@ class NeuralTransferStyle:
             None
         """
         try:
-            self.content = self.load(content_path)
+            self.content = self.__load(content_path)
             content_shape = self.content.shape
             img_height = content_shape[1]
             img_width = content_shape[2]
 
-            self.style = self.load(style_path, target_size=(img_height, img_width))
+            self.style = self.__load(style_path, target_size=(img_height, img_width))
             self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
                                        tf.image.convert_image_dtype(self.style, tf.float32))[0]
             plt.imshow(self.content[0])
