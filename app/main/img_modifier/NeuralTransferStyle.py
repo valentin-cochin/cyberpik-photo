@@ -1,3 +1,4 @@
+import traceback
 from os import path
 
 import matplotlib.pyplot as plt
@@ -40,7 +41,7 @@ class NeuralTransferStyle:
         self.stylized = None
 
     @staticmethod
-    def __load(image_path, target_size=None):
+    def __load(image_path, max_size=800, target_size=None):
         """
         Loads an image as a numpy array and normalizes it from the given image path
 
@@ -58,6 +59,21 @@ class NeuralTransferStyle:
         img = tf.keras.preprocessing.image.load_img(image_path, target_size=target_size)
         img = tf.keras.preprocessing.image.img_to_array(img)
         img = np.array([img / 255.0])
+
+        img_height = img.shape[1]
+        img_width = img.shape[2]
+
+        if max([img_height, img_width]) > max_size:
+            if img_height > img_width:
+                new_height = max_size
+                new_width = new_height * (img_width / img_height)
+                new_width = int(new_width)
+            else:
+                new_width = max_size
+                new_height = new_width * (img_height / img_width)
+                new_height = int(new_height)
+            img = tf.image.resize(img, size=(new_height, new_width))
+            print(img.shape)
         return img
 
     def stylize_image(self, content_path, style_path):
@@ -95,6 +111,7 @@ class NeuralTransferStyle:
             plt.show()
         except Exception as e:
             print("Error Occurred :", e)
+            traceback.print_exc()
 
 
 if __name__ == "__main__":
