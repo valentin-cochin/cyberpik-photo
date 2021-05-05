@@ -19,10 +19,12 @@ class NeuralTransferStyle:
 
     Methods
     -------
-        load(image_path) :
-            Loads an image as a numpy array and normalizes it from the given image path
         stylize_image(content_path,style_path) :
             Applies Neural Style Transfer to Content Image from Style Image and Displays the Stylized Image
+        __load(image_path) :
+            Loads an image as a numpy array and normalizes it from the given image path
+        __resize(img, max_size):
+            Resize a Numpy Array from an image according to a max size
     """
 
     def __init__(self, model_path):
@@ -39,6 +41,43 @@ class NeuralTransferStyle:
         self.content = None
         self.style = None
         self.stylized = None
+
+    def stylize_image(self, content_path, style_path):
+        """
+        Applies Neural Style Transfer to Content Image from Style Image and Displays the Stylized Image
+
+        Parameters
+        ----------
+            content_path : str
+                path of the Content Image
+            style_path : str
+                path of the Style Image
+
+        Returns
+        -------
+            None
+        """
+        try:
+            self.content = NeuralTransferStyle.__load(content_path)
+            content_shape = self.content.shape
+            img_height = content_shape[1]
+            img_width = content_shape[2]
+
+            self.style = NeuralTransferStyle.__load(style_path, target_size=(img_height, img_width))
+            self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
+                                       tf.image.convert_image_dtype(self.style, tf.float32))[0]
+            plt.imshow(self.content[0])
+            plt.title('Content Image')
+            plt.show()
+            plt.imshow(self.style[0])
+            plt.title('Style Image')
+            plt.show()
+            plt.imshow(self.stylized[0])
+            plt.title('Stylized Image')
+            plt.show()
+        except Exception as e:
+            print("Error Occurred :", e)
+            traceback.print_exc()
 
     @staticmethod
     def __load(image_path, max_size=800, target_size=None):
@@ -59,7 +98,25 @@ class NeuralTransferStyle:
         img = tf.keras.preprocessing.image.load_img(image_path, target_size=target_size)
         img = tf.keras.preprocessing.image.img_to_array(img)
         img = np.array([img / 255.0])
+        img = NeuralTransferStyle.__resize(img, max_size)
+        return img
 
+    @staticmethod
+    def __resize(img, max_size):
+        """
+        Resize a Numpy Array from an image according to a max size
+
+        Parameters
+        ----------
+            img : Numpy Array
+                Image tensor to be resized
+            max_size : int
+                Max height or width
+
+        Returns
+        -------
+            img : Numpy Array
+        """
         img_height = img.shape[1]
         img_width = img.shape[2]
 
@@ -73,45 +130,7 @@ class NeuralTransferStyle:
                 new_height = new_width * (img_height / img_width)
                 new_height = int(new_height)
             img = tf.image.resize(img, size=(new_height, new_width))
-            print(img.shape)
         return img
-
-    def stylize_image(self, content_path, style_path):
-        """
-        Applies Neural Style Transfer to Content Image from Style Image and Displays the Stylized Image
-
-        Parameters
-        ----------
-            content_path : str
-                path of the Content Image
-            style_path : str
-                path of the Style Image
-
-        Returns
-        -------
-            None
-        """
-        try:
-            self.content = self.__load(content_path)
-            content_shape = self.content.shape
-            img_height = content_shape[1]
-            img_width = content_shape[2]
-
-            self.style = self.__load(style_path, target_size=(img_height, img_width))
-            self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
-                                       tf.image.convert_image_dtype(self.style, tf.float32))[0]
-            plt.imshow(self.content[0])
-            plt.title('Content Image')
-            plt.show()
-            plt.imshow(self.style[0])
-            plt.title('Style Image')
-            plt.show()
-            plt.imshow(self.stylized[0])
-            plt.title('Stylized Image')
-            plt.show()
-        except Exception as e:
-            print("Error Occurred :", e)
-            traceback.print_exc()
 
 
 if __name__ == "__main__":
