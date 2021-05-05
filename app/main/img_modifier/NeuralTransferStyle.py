@@ -48,8 +48,8 @@ class NeuralTransferStyle:
         ----------
             image_path : str
                 File path of the image
-            target_size : Either `None` (default to original size) or tuple of ints `(img_height, img_width)`.
-                Size of the image
+            target_size : (int, int)
+                Size of the image. Either `None` (default to original size) or tuple of ints `(img_height, img_width)`.
 
         Returns
         -------
