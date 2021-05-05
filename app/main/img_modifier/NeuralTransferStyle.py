@@ -24,26 +24,23 @@ class NeuralTransferStyle:
             Applies Neural Style Transfer to Content Image from Style Image and Displays the Stylized Image
     """
 
-    def __init__(self):
+    def __init__(self, model_path):
         """
         Constructs the Fast Arbitrary Image Style Transfer Model from Tensorflow Hub
 
         Parameters
         ----------
-            None
+            model_path : str
+                Path for the model used by Tensorflow
         """
         # Fast arbitrary image style transfer model from Tensorflow Hub
-        base_path = path.dirname(__file__)
-        filepath = path.abspath(
-            path.join(base_path, '..', '..', '..', 'ml_models', 'magenta_arbitrary-image-stylization-v1-256_2'))
-
-        self.model = hub.load(filepath)
+        self.model = hub.load(model_path)
         self.content = None
         self.style = None
         self.stylized = None
 
     # @staticmethod
-    def load(self, image_path):
+    def load(self, image_path, target_size=None):
         """
         Loads an image as a numpy array and normalizes it from the given image path
 
@@ -51,12 +48,14 @@ class NeuralTransferStyle:
         ----------
             image_path : str
                 File path of the image
+            target_size : Either `None` (default to original size) or tuple of ints `(img_height, img_width)`.
+                Size of the image
 
         Returns
         -------
             img : Numpy Array
         """
-        img = tf.keras.preprocessing.image.load_img(image_path, target_size=(960, 720))
+        img = tf.keras.preprocessing.image.load_img(image_path, target_size=target_size)
         img = tf.keras.preprocessing.image.img_to_array(img)
         img = np.array([img / 255.0])
         return img
@@ -78,7 +77,11 @@ class NeuralTransferStyle:
         """
         try:
             self.content = self.load(content_path)
-            self.style = self.load(style_path)
+            content_shape = self.content.shape
+            img_height = content_shape[1]
+            img_width = content_shape[2]
+
+            self.style = self.load(style_path, target_size=(img_height, img_width))
             self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
                                        tf.image.convert_image_dtype(self.style, tf.float32))[0]
             plt.imshow(self.content[0])
@@ -95,4 +98,13 @@ class NeuralTransferStyle:
 
 
 if __name__ == "__main__":
-    nst = NeuralTransferStyle()
+    base_path = path.dirname(__file__)
+    filepath = path.abspath(
+        path.join(base_path, '..', '..', '..', 'ml_models', 'magenta_arbitrary-image-stylization-v1-256_2'))
+
+    nst = NeuralTransferStyle(filepath)
+
+    content_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\original\\aeri.jpg'
+    style_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\style\\vaporwave-fluid.jpg'
+
+    nst.stylize_image(content_path, style_path)
