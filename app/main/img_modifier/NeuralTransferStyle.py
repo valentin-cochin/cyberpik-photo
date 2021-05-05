@@ -36,8 +36,7 @@ class NeuralTransferStyle:
             model_path : str
                 Path for the model used by Tensorflow
         """
-        # Fast arbitrary image style transfer model from Tensorflow Hub
-        self.model = hub.load(model_path)
+        self.model = hub.load(model_path) # Fast arbitrary image style transfer model from Tensorflow Hub
         self.content = None
         self.style = None
         self.stylized = None
@@ -66,15 +65,8 @@ class NeuralTransferStyle:
             self.style = NeuralTransferStyle.__load(style_path, target_size=(img_height, img_width))
             self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
                                        tf.image.convert_image_dtype(self.style, tf.float32))[0]
-            plt.imshow(self.content[0])
-            plt.title('Content Image')
-            plt.show()
-            plt.imshow(self.style[0])
-            plt.title('Style Image')
-            plt.show()
-            plt.imshow(self.stylized[0])
-            plt.title('Stylized Image')
-            plt.show()
+
+            self.show_as_plots()
         except Exception as e:
             print("Error Occurred :", e)
             traceback.print_exc()
@@ -131,6 +123,17 @@ class NeuralTransferStyle:
                 new_height = int(new_height)
             img = tf.image.resize(img, size=(new_height, new_width))
         return img
+
+    def __show_as_plots(self):
+        plt.imshow(self.content[0])
+        plt.title('Content Image')
+        plt.show()
+        plt.imshow(self.style[0])
+        plt.title('Style Image')
+        plt.show()
+        plt.imshow(self.stylized[0])
+        plt.title('Stylized Image')
+        plt.show()
 
 
 if __name__ == "__main__":
