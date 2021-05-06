@@ -1,8 +1,10 @@
+import imghdr
 from io import BytesIO
 from os import path
 
 from PIL import Image
-from flask import Blueprint, send_file
+from flask import Blueprint, request, send_file, abort
+from werkzeug.utils import secure_filename
 
 from app.config import BaseConfig
 
@@ -18,8 +20,25 @@ def get_default():
 
 @effects_blueprint.route('/default', methods=['POST'])
 def post_default():
-    img = Image.open('C:\\Users\\Valentin\\Pictures\\neural-transfer\\original\\aeri.jpg')
-    return serve_pil_image(img)
+    uploaded_file = request.files['file']
+
+    if allowed_image(uploaded_file):
+        pil_image = Image.open(uploaded_file)
+        return serve_pil_image(pil_image)
+    else:
+        return "Invalid image or filename", 422
+
+
+def allowed_image(file):
+    filename = secure_filename(file.filename)
+
+    if filename == '':
+        return False
+    else:
+        file_ext = path.splitext(filename)[1]
+        is_file_ext_allowed = file_ext in ['.jpg', '.jpeg']
+        is_image_validated = (file_ext == validate_image(file.stream))
+        return is_file_ext_allowed and is_image_validated
 
 
 def serve_pil_image(pil_img):
@@ -27,3 +46,12 @@ def serve_pil_image(pil_img):
     pil_img.save(img_io, 'JPEG', quality=100)
     img_io.seek(0)
     return send_file(img_io, mimetype='image/jpeg')
+
+
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0)
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')
