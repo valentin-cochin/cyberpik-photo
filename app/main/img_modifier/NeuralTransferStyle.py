@@ -36,12 +36,12 @@ class NeuralTransferStyle:
             model_path : str
                 Path for the model used by Tensorflow
         """
-        self.model = hub.load(model_path) # Fast arbitrary image style transfer model from Tensorflow Hub
+        self.model = hub.load(model_path)  # Fast arbitrary image style transfer model from Tensorflow Hub
         self.content = None
         self.style = None
         self.stylized = None
 
-    def stylize_image(self, content_path, style_path):
+    def stylize_image(self, content_path, style_path, show_plots=False):
         """
         Applies Neural Style Transfer to Content Image from Style Image and Displays the Stylized Image
 
@@ -65,8 +65,9 @@ class NeuralTransferStyle:
             self.style = NeuralTransferStyle.__load(style_path, target_size=(img_height, img_width))
             self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
                                        tf.image.convert_image_dtype(self.style, tf.float32))[0]
+            self.__show_plots() if show_plots else None
 
-            self.show_as_plots()
+            img = tf.keras.preprocessing.image.array_to_img(self.stylized[0])
         except Exception as e:
             print("Error Occurred :", e)
             traceback.print_exc()
@@ -124,15 +125,20 @@ class NeuralTransferStyle:
             img = tf.image.resize(img, size=(new_height, new_width))
         return img
 
-    def __show_as_plots(self):
+    def __show_plots(self):
         plt.imshow(self.content[0])
         plt.title('Content Image')
+        plt.axis('off')
         plt.show()
+
         plt.imshow(self.style[0])
         plt.title('Style Image')
+        plt.axis('off')
         plt.show()
+
         plt.imshow(self.stylized[0])
         plt.title('Stylized Image')
+        plt.axis('off')
         plt.show()
 
 
@@ -141,9 +147,9 @@ if __name__ == "__main__":
     filepath = path.abspath(
         path.join(base_path, '..', '..', '..', 'ml_models', 'magenta_arbitrary-image-stylization-v1-256_2'))
 
-    nst = NeuralTransferStyle(filepath)
+    nst = NeuralTransferStyle('..\\..\\..\\ml_models\\magenta_arbitrary-image-stylization-v1-256_2')
 
     content_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\original\\aeri.jpg'
     style_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\style\\vaporwave-fluid.jpg'
 
-    nst.stylize_image(content_path, style_path)
+    nst.stylize_image(content_path, style_path, True)
