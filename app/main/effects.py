@@ -1,22 +1,24 @@
-from io import StringIO, BytesIO
+from io import BytesIO
+from os import path
 
 from PIL import Image
-from flask import Blueprint, jsonify, send_file
+from flask import Blueprint, send_file
+
+from app.config import BaseConfig
 
 effects_blueprint = Blueprint('effects', __name__, url_prefix='/api/v1/effects')
 
 
 @effects_blueprint.route('/default', methods=['GET'])
 def get_default():
-    img = Image.open('C:\\Users\\Valentin\\Pictures\\neural-transfer\\original\\aeri.jpg')
-    # img = Image.new('RGB', ...)
+    file_path = path.join(BaseConfig.ASSETS_DEFAULT_DIR, "valentin.jpg")
+    img = Image.open(file_path)
     return serve_pil_image(img)
 
 
 @effects_blueprint.route('/default', methods=['POST'])
 def post_default():
     img = Image.open('C:\\Users\\Valentin\\Pictures\\neural-transfer\\original\\aeri.jpg')
-    # img = Image.new('RGB', ...)
     return serve_pil_image(img)
 
 
