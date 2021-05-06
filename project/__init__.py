@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from app.main.effects import effects_blueprint
+from project.main.effects import effects_blueprint
 
 
 def create_app(script_info=None):
@@ -11,7 +11,7 @@ def create_app(script_info=None):
     # set config
     # app_settings = os.getenv('APP_SETTINGS')
     # app.config.from_object(app_settings)
-    app.config.from_object('app.config.DevelopmentConfig')
+    app.config.from_object('project.config.DevelopmentConfig')
 
     # register blueprints
     app.register_blueprint(effects_blueprint)

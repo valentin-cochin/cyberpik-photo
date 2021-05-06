@@ -6,7 +6,7 @@ from PIL import Image
 from flask import Blueprint, request, send_file, abort
 from werkzeug.utils import secure_filename
 
-from app.config import BaseConfig
+from project.config import BaseConfig
 
 effects_blueprint = Blueprint('effects', __name__, url_prefix='/api/v1/effects')
 
@@ -20,6 +20,17 @@ def get_default():
 
 @effects_blueprint.route('/default', methods=['POST'])
 def post_default():
+    uploaded_file = request.files['file']
+
+    if allowed_image(uploaded_file):
+        pil_image = Image.open(uploaded_file)
+        return serve_pil_image(pil_image)
+    else:
+        return "Invalid image or filename", 422
+
+
+@effects_blueprint.route('/', methods=['POST'])
+def post_for_transformation():
     uploaded_file = request.files['file']
 
     if allowed_image(uploaded_file):
