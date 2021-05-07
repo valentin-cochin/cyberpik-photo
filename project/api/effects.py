@@ -36,6 +36,7 @@ def post_for_transformation():
 
     if allowed_image(uploaded_file):
         original_img = Image.open(uploaded_file)
+        # TODO: refactor this if statement
         if allowed_style(style):
             nst = NeuralTransferStyle(current_app.config['NST_MODEL_DIR'], original_img)
             style_img_filename = current_app.config['NST_STYLES'][style]
