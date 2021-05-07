@@ -6,7 +6,7 @@ from PIL import Image
 from flask import Blueprint, current_app, request, send_file
 from werkzeug.utils import secure_filename
 
-from project.main.img_modifier.NeuralTransferStyle import NeuralTransferStyle
+from project.api.img_modifier.NeuralTransferStyle import NeuralTransferStyle
 
 effects_blueprint = Blueprint('effects', __name__, url_prefix='/api/v1/effects')
 

@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from project.main.effects import effects_blueprint
+from project.api.effects import effects_blueprint
 
 
 def create_app(script_info=None):

@@ -1,5 +1,4 @@
 import traceback
-from os import path
 
 import PIL
 import matplotlib.pyplot as plt

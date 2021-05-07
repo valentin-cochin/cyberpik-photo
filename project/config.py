@@ -8,7 +8,7 @@ class BaseConfig:
 
     # Directories
     __base_path = path.dirname(__file__)
-    ML_MODELS_DIR = path.join(__base_path, '..', 'ml_models')
+    ML_MODELS_DIR = path.join(__base_path, '..', 'resources', 'ml_models')
     ASSETS_DEFAULT_DIR = path.join(__base_path, '..', 'resources', 'assets', 'default')
     ASSETS_STYLE_DIR = path.join(__base_path, '..', 'resources', 'assets', 'style')
 
