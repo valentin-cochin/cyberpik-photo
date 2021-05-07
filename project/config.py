@@ -1,15 +1,19 @@
 from os import path
 
-_base_path = path.dirname(__file__)
 
 class BaseConfig:
     """Base configuration"""
+    # Builtin Configuration
     TESTING = False
-    SECRET_KEY = 'my_precious'
 
-    ML_MODELS_DIR = path.join(_base_path, '..', 'ml_models')
-    ASSETS_DEFAULT_DIR = path.join(_base_path, '..', 'resources', 'assets', 'default')
-    ASSETS_STYLE_DIR = path.join(_base_path, '..', 'resources', 'assets', 'style')
+    # Directories
+    __base_path = path.dirname(__file__)
+    ML_MODELS_DIR = path.join(__base_path, '..', 'ml_models')
+    ASSETS_DEFAULT_DIR = path.join(__base_path, '..', 'resources', 'assets', 'default')
+    ASSETS_STYLE_DIR = path.join(__base_path, '..', 'resources', 'assets', 'style')
+
+    ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg']
+
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration"""

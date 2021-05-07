@@ -3,10 +3,9 @@ from io import BytesIO
 from os import path
 
 from PIL import Image
-from flask import Blueprint, request, send_file
+from flask import Blueprint, current_app, request, send_file
 from werkzeug.utils import secure_filename
 
-from project.config import BaseConfig
 from project.main.img_modifier.NeuralTransferStyle import NeuralTransferStyle
 
 effects_blueprint = Blueprint('effects', __name__, url_prefix='/api/v1/effects')
@@ -14,7 +13,7 @@ effects_blueprint = Blueprint('effects', __name__, url_prefix='/api/v1/effects')
 
 @effects_blueprint.route('/default', methods=['GET'])
 def get_default():
-    file_path = path.join(BaseConfig.ASSETS_DEFAULT_DIR, "valentin.jpg")
+    file_path = path.join(current_app.config['ASSETS_DEFAULT_DIR'], "valentin.jpg")
     img = Image.open(file_path)
     return serve_pil_image(img)
 
@@ -38,10 +37,10 @@ def post_for_transformation():
         original_img = Image.open(uploaded_file)
 
         # Fast arbitrary image style transfer model from Tensorflow Hub
-        model_file_path = path.join(BaseConfig.ML_MODELS_DIR, "magenta_arbitrary-image-stylization-v1-256_2")
+        model_file_path = path.join(current_app.config['ML_MODELS_DIR'], "magenta_arbitrary-image-stylization-v1-256_2")
         nst = NeuralTransferStyle(model_file_path, original_img)
 
-        style_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\style\\vaporwave-fluid.jpg'
+        style_path = path.join(current_app.config['ASSETS_STYLE_DIR'], "vaporwave-fluid.jpg")
 
         new_img = nst.stylize_image(style_path=style_path)
 
@@ -57,7 +56,7 @@ def allowed_image(file):
         return False
     else:
         file_ext = path.splitext(filename)[1]
-        is_file_ext_allowed = file_ext in ['.jpg', '.jpeg']
+        is_file_ext_allowed = file_ext in current_app.config['ALLOWED_IMAGE_EXTENSIONS']
         is_image_validated = (file_ext == validate_image(file.stream))
         return is_file_ext_allowed and is_image_validated
 
