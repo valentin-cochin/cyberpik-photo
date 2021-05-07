@@ -1,6 +1,7 @@
 import traceback
 from os import path
 
+import PIL
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -20,14 +21,14 @@ class NeuralTransferStyle:
     Methods
     -------
         stylize_image(content_path,style_path) :
-            Applies Neural Style Transfer to Content Image from Style Image and Displays the Stylized Image
+            Applies Neural Style Transfer to Content Image from Style Image and Returns the Stylized Image
         __load(image_path) :
             Loads an image as a numpy array and normalizes it from the given image path
         __resize(img, max_size):
             Resize a Numpy Array from an image according to a max size
     """
 
-    def __init__(self, model_path):
+    def __init__(self, model_path, content=None):
         """
         Constructs the Fast Arbitrary Image Style Transfer Model from Tensorflow Hub
 
@@ -36,14 +37,16 @@ class NeuralTransferStyle:
             model_path : str
                 Path for the model used by Tensorflow
         """
-        self.model = hub.load(model_path)  # Fast arbitrary image style transfer model from Tensorflow Hub
-        self.content = None
+        assert isinstance(content, PIL.Image.Image)
+
+        self.model = hub.load(model_path)
+        self.content = content
         self.style = None
         self.stylized = None
 
-    def stylize_image(self, content_path, style_path, show_plots=False):
+    def stylize_image(self, content_path=None, style_path=None, show_plots=False):
         """
-        Applies Neural Style Transfer to Content Image from Style Image and Displays the Stylized Image
+        Applies Neural Style Transfer to Content Image from Style Image and Returns the Stylized Image
 
         Parameters
         ----------
@@ -51,26 +54,32 @@ class NeuralTransferStyle:
                 path of the Content Image
             style_path : str
                 path of the Style Image
+            show_plots : bool
+                to show content, style and stylized images
 
         Returns
         -------
-            None
+            A PIL Image instance
         """
         try:
-            self.content = NeuralTransferStyle.__load(content_path)
-            content_shape = self.content.shape
-            img_height = content_shape[1]
-            img_width = content_shape[2]
+            if self.content is None:
+                self.content = NeuralTransferStyle.__load(content_path)
+            else:
+                self.content = NeuralTransferStyle.__img_to_numpy_arr(self.content)
+
+            img_height = self.content.shape[1]
+            img_width = self.content.shape[2]
 
             self.style = NeuralTransferStyle.__load(style_path, target_size=(img_height, img_width))
             self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
                                        tf.image.convert_image_dtype(self.style, tf.float32))[0]
             self.__show_plots() if show_plots else None
 
-            img = tf.keras.preprocessing.image.array_to_img(self.stylized[0])
+            return tf.keras.preprocessing.image.array_to_img(self.stylized[0])
         except Exception as e:
             print("Error Occurred :", e)
             traceback.print_exc()
+            return None
 
     @staticmethod
     def __load(image_path, max_size=800, target_size=None):
@@ -89,6 +98,11 @@ class NeuralTransferStyle:
             img : Numpy Array
         """
         img = tf.keras.preprocessing.image.load_img(image_path, target_size=target_size)
+        img = NeuralTransferStyle.__img_to_numpy_arr(img, max_size)
+        return img
+
+    @staticmethod
+    def __img_to_numpy_arr(img, max_size=800):
         img = tf.keras.preprocessing.image.img_to_array(img)
         img = np.array([img / 255.0])
         img = NeuralTransferStyle.__resize(img, max_size)
@@ -140,16 +154,3 @@ class NeuralTransferStyle:
         plt.title('Stylized Image')
         plt.axis('off')
         plt.show()
-
-
-if __name__ == "__main__":
-    base_path = path.dirname(__file__)
-    filepath = path.abspath(
-        path.join(base_path, '..', '..', '..', 'ml_models', 'magenta_arbitrary-image-stylization-v1-256_2'))
-
-    nst = NeuralTransferStyle('..\\..\\..\\ml_models\\magenta_arbitrary-image-stylization-v1-256_2')
-
-    content_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\original\\aeri.jpg'
-    style_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\style\\vaporwave-fluid.jpg'
-
-    nst.stylize_image(content_path, style_path, True)

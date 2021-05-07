@@ -3,10 +3,11 @@ from io import BytesIO
 from os import path
 
 from PIL import Image
-from flask import Blueprint, request, send_file, abort
+from flask import Blueprint, request, send_file
 from werkzeug.utils import secure_filename
 
 from project.config import BaseConfig
+from project.main.img_modifier.NeuralTransferStyle import NeuralTransferStyle
 
 effects_blueprint = Blueprint('effects', __name__, url_prefix='/api/v1/effects')
 
@@ -34,8 +35,17 @@ def post_for_transformation():
     uploaded_file = request.files['file']
 
     if allowed_image(uploaded_file):
-        pil_image = Image.open(uploaded_file)
-        return serve_pil_image(pil_image)
+        original_img = Image.open(uploaded_file)
+
+        # Fast arbitrary image style transfer model from Tensorflow Hub
+        model_file_path = path.join(BaseConfig.ML_MODELS_DIR, "magenta_arbitrary-image-stylization-v1-256_2")
+        nst = NeuralTransferStyle(model_file_path, original_img)
+
+        style_path = 'C:\\Users\\Valentin\\Pictures\\neural-transfer\\style\\vaporwave-fluid.jpg'
+
+        new_img = nst.stylize_image(style_path=style_path)
+
+        return serve_pil_image(new_img)
     else:
         return "Invalid image or filename", 422
 
