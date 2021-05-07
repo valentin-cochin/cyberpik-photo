@@ -13,7 +13,15 @@ class BaseConfig:
     ASSETS_DEFAULT_DIR = path.join(__base_path, '..', 'resources', 'assets', 'default')
     ASSETS_STYLE_DIR = path.join(__base_path, '..', 'resources', 'assets', 'style')
 
+    # Other constants
     ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg']
+    EFFECTS = ['nst']
+    NST_STYLES = {
+        'synthwave-back': 'synthwave-back.jpg',
+        'vaporwave-angel': 'vaporwave-angel.png',
+        'vaporwave-fluid': 'vaporwave-fluid.jpg',
+        'vaporwave-glitch_line': 'vaporwave-glitch_line.jpg'
+    }
 
 
 class DevelopmentConfig(BaseConfig):

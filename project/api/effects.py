@@ -32,13 +32,19 @@ def post_default():
 @effects_blueprint.route('/', methods=['POST'])
 def post_for_transformation():
     uploaded_file = request.files['file']
+    style = request.args.get('style')
 
     if allowed_image(uploaded_file):
         original_img = Image.open(uploaded_file)
-        nst = NeuralTransferStyle(current_app.config['NST_MODEL_DIR'], original_img)
-        style_path = path.join(current_app.config['ASSETS_STYLE_DIR'], 'vaporwave-fluid.jpg')
-        new_img = nst.stylize_image(style_path=style_path)
-        return serve_pil_image(new_img)
+        if allowed_style(style):
+            nst = NeuralTransferStyle(current_app.config['NST_MODEL_DIR'], original_img)
+            style_img_filename = current_app.config['NST_STYLES'][style]
+            style_path = path.join(current_app.config['ASSETS_STYLE_DIR'],  style_img_filename)
+            new_img = nst.stylize_image(style_path=style_path)
+            return serve_pil_image(new_img)
+        else:
+            return "Invalid Style", 422
+
     else:
         return "Invalid image or filename", 422
 
@@ -54,6 +60,14 @@ def allowed_image(file):
         is_file_ext_allowed = file_ext in current_app.config['ALLOWED_IMAGE_EXTENSIONS']
         is_image_validated = (file_ext == validate_image(file.stream))
         return is_file_ext_allowed and is_image_validated
+
+
+def allowed_effect(effect_name):
+    return effect_name in current_app.config['EFFECTS']
+
+
+def allowed_style(style_name):
+    return style_name in current_app.config['NST_STYLES'].keys()
 
 
 def serve_pil_image(pil_img):
