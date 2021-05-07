@@ -1,0 +1,2 @@
+resources/assets/** filter=lfs diff=lfs merge=lfs -text
+resources/ml_models/** filter=lfs diff=lfs merge=lfs -text

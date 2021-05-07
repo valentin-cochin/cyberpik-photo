@@ -1,0 +1,2 @@
+post_default():
+curl -i -X POST -H "Content-Type: multipart/form-data" -F   "file=@C:\Users\Valentin\Pictures\neural-transfer\original\aeri.jpg" http://localhost:5000/api/v1/effects/default
