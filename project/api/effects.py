@@ -35,15 +35,9 @@ def post_for_transformation():
 
     if allowed_image(uploaded_file):
         original_img = Image.open(uploaded_file)
-
-        # Fast arbitrary image style transfer model from Tensorflow Hub
-        model_file_path = path.join(current_app.config['ML_MODELS_DIR'], "magenta_arbitrary-image-stylization-v1-256_2")
-        nst = NeuralTransferStyle(model_file_path, original_img)
-
-        style_path = path.join(current_app.config['ASSETS_STYLE_DIR'], "vaporwave-fluid.jpg")
-
+        nst = NeuralTransferStyle(current_app.config['NST_MODEL_DIR'], original_img)
+        style_path = path.join(current_app.config['ASSETS_STYLE_DIR'], 'vaporwave-fluid.jpg')
         new_img = nst.stylize_image(style_path=style_path)
-
         return serve_pil_image(new_img)
     else:
         return "Invalid image or filename", 422
@@ -56,6 +50,7 @@ def allowed_image(file):
         return False
     else:
         file_ext = path.splitext(filename)[1]
+        file_ext = file_ext.lower()
         is_file_ext_allowed = file_ext in current_app.config['ALLOWED_IMAGE_EXTENSIONS']
         is_image_validated = (file_ext == validate_image(file.stream))
         return is_file_ext_allowed and is_image_validated
