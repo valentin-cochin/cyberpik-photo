@@ -9,7 +9,7 @@ from project import create_app
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
-COV = coverage.coverage(
+coverage = coverage.coverage(
     branch=True,
     include='project/*',
     omit=[
@@ -17,7 +17,8 @@ COV = coverage.coverage(
         'project/config.py',
     ]
 )
-COV.start()
+coverage.start()
+
 
 @cli.command()
 def test():
@@ -28,20 +29,22 @@ def test():
         return 0
     return 1
 
+
 @cli.command()
 def cov():
     """Runs the unit tests with coverage."""
     tests = unittest.TestLoader().discover('project/tests')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
-        COV.stop()
-        COV.save()
+        coverage.stop()
+        coverage.save()
         print('Coverage Summary:')
-        COV.report()
-        COV.html_report()
-        COV.erase()
+        coverage.report()
+        coverage.html_report()
+        coverage.erase()
         return 0
     return 1
+
 
 if __name__ == '__main__':
     cli()
