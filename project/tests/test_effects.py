@@ -21,11 +21,8 @@ class TestEffectController(BaseTestCase):
 
     def test_should_return_same_img_when_post_default(self):
         """Ensure the /default route with POST behaves correctly."""
-        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
-        with open(path_img_sent, 'rb') as img:
-            img_sent_bytes = BytesIO(img.read())
         file = werkzeug.datastructures.FileStorage(
-            stream=img_sent_bytes,
+            stream=self.img_sent_bytes,
             filename='image.jpg',
             content_type='image/jpg'
         )
@@ -76,11 +73,8 @@ class TestEffectController(BaseTestCase):
 
     def test_should_return_error422_when_post_with_wrong_style_param(self):
         """Ensure error is thrown when non-existing style is used for transformation."""
-        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
-        with open(path_img_sent, 'rb') as img:
-            img_sent_bytes = BytesIO(img.read())
         file = werkzeug.datastructures.FileStorage(
-            stream=img_sent_bytes,
+            stream=self.img_sent_bytes,
             filename='image.jpg',
             content_type='image/jpg'
         )
@@ -97,11 +91,8 @@ class TestEffectController(BaseTestCase):
 
     def test_should_return_error422_when_post_with_empty_filename(self):
         """Ensure error is thrown when image is sent with no filename."""
-        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
-        with open(path_img_sent, 'rb') as img:
-            img_sent_bytes = BytesIO(img.read())
         file = werkzeug.datastructures.FileStorage(
-            stream=img_sent_bytes,
+            stream=self.img_sent_bytes,
             filename='',
             content_type='image/jpg'
         )
@@ -118,11 +109,8 @@ class TestEffectController(BaseTestCase):
 
     def test_should_return_error422_when_post_with_gif_ext(self):
         """Ensure error is thrown when image with .gif extension."""
-        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
-        with open(path_img_sent, 'rb') as img:
-            img_sent_bytes = BytesIO(img.read())
         file = werkzeug.datastructures.FileStorage(
-            stream=img_sent_bytes,
+            stream=self.img_sent_bytes,
             filename='image.gif',
             content_type='image/jpg'
         )
@@ -157,11 +145,8 @@ class TestEffectController(BaseTestCase):
 
     def test_should_return_transformed_img_when_post(self):
         """Ensure the /effects route with POST behaves correctly."""
-        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
-        with open(path_img_sent, 'rb') as img:
-            img_sent_bytes = BytesIO(img.read())
         file = werkzeug.datastructures.FileStorage(
-            stream=img_sent_bytes,
+            stream=self.img_sent_bytes,
             filename='image.jpg',
             content_type='image/jpg'
         )
