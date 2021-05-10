@@ -62,9 +62,9 @@ def allowed_image(file):
         is_image_validated = (file_ext == validate_image(file.stream))
         return is_file_ext_allowed and is_image_validated
 
-
-def allowed_effect(effect_name):
-    return effect_name in current_app.config['EFFECTS']
+# TODO : user in future version
+# def allowed_effect(effect_name):
+#     return effect_name in current_app.config['EFFECTS']
 
 
 def allowed_style(style_name):
