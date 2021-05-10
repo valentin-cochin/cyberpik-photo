@@ -48,6 +48,57 @@ class TestEffectController(BaseTestCase):
             )
         self.assert400
 
+    def test_should_return_error400_img_when_no_file_posted(self):
+        """Ensure the /effects route with POST behaves correctly."""
+        effect = 'nst'
+        style = 'gibberish'
+        response = self.client.post(
+            f'/api/v1/effects/?effect={effect}&style={style}',
+            content_type='multipart/form-data'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_should_return_error400_when_post_with_wrong_style_param(self):
+        """Ensure the /effects route with POST behaves correctly."""
+        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
+        with open(path_img_sent, 'rb') as img:
+            img_sent_bytes = BytesIO(img.read())
+        file = werkzeug.datastructures.FileStorage(
+            stream=img_sent_bytes,
+            filename='image.jpg',
+            content_type='image/jpg'
+        )
+        effect = 'nst'
+        style = 'synthwave-track'
+        response = self.client.post(
+            f'/api/v1/effects/?effect={effect}&style={style}',
+            data={
+                'file': file
+            },
+            content_type='multipart/form-data'
+        )
+        self.assertEqual(response.status_code, 422)
+
+    def test_should_return_transformed_img_when_post(self):
+        """Ensure the /effects route with POST behaves correctly."""
+        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
+        with open(path_img_sent, 'rb') as img:
+            img_sent_bytes = BytesIO(img.read())
+        file = werkzeug.datastructures.FileStorage(
+            stream=img_sent_bytes,
+            filename='image.jpg',
+            content_type='image/jpg'
+        )
+        effect = 'nst'
+        style = 'synthwave-back'
+        response = self.client.post(
+            f'/api/v1/effects/?effect={effect}&style={style}',
+            data={
+                'file': file
+            },
+            content_type='multipart/form-data'
+        )
+        self.assert_200
 
 if __name__ == '__main__':
     unittest.main()
