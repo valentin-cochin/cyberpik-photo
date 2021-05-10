@@ -1,7 +1,8 @@
 import unittest
 
-import coverage as coverage
 from flask.cli import FlaskGroup
+import coverage as coverage
+
 
 from project import create_app
 
