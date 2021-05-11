@@ -9,17 +9,6 @@ from project import create_app
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
-coverage = coverage.coverage(
-    branch=True,
-    include='project/*',
-    omit=[
-        'project/tests/*',
-        'project/config.py',
-    ]
-)
-coverage.start()
-
-
 @cli.command()
 def test():
     """ Runs the tests without code coverage"""
@@ -33,15 +22,17 @@ def test():
 @cli.command()
 def cov():
     """Runs the unit tests with coverage."""
+    cover = coverage.coverage()
+    cover.start()
     tests = unittest.TestLoader().discover('project/tests')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
-        coverage.stop()
-        coverage.save()
+        cover.stop()
+        cover.save()
         print('Coverage Summary:')
-        coverage.report()
-        coverage.html_report()
-        coverage.erase()
+        cover.report()
+        cover.html_report()
+        cover.erase()
         return 0
     return 1
 
