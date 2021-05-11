@@ -9,18 +9,20 @@ from werkzeug.utils import secure_filename
 
 effects_blueprint = Blueprint(
     'effects', __name__, url_prefix='/api/v1/effects')
-config = current_app.config
 
 
 @effects_blueprint.route('/default', methods=['GET'])
 def get_default():
-    file_path = path.join(config['ASSETS_DEFAULT_DIR'], "valentin.jpg")
+    """Return default image when '/default' route is called with HTTP GET method."""
+    file_path = path.join(
+        current_app.config['ASSETS_DEFAULT_DIR'], "valentin.jpg")
     img = Image.open(file_path)
     return serve_pil_image(img)
 
 
 @effects_blueprint.route('/default', methods=['POST'])
 def post_default():
+    """Return same image when '/default' route is called with HTTP POST method."""
     uploaded_file = request.files['file']
 
     if allowed_image(uploaded_file):
@@ -32,6 +34,7 @@ def post_default():
 
 @effects_blueprint.route('/', methods=['POST'])
 def post_for_transformation():
+    """Return transformed image when route is called with HTTP POST method."""
     uploaded_file = request.files['file']
     style = request.args.get('style')
 
@@ -40,10 +43,10 @@ def post_for_transformation():
         # TODO: refactor this if statement
         if allowed_style(style):
             nst = NeuralTransferStyle(
-                config['NST_MODEL_DIR'], original_img)
-            style_img_filename = config['NST_STYLES'][style]
+                current_app.config['NST_MODEL_DIR'], original_img)
+            style_img_filename = current_app.config['NST_STYLES'][style]
             style_path = path.join(
-                config['ASSETS_STYLE_DIR'], style_img_filename)
+                current_app.config['ASSETS_STYLE_DIR'], style_img_filename)
             new_img = nst.stylize_image(style_path=style_path)
             return serve_pil_image(new_img)
         else:
@@ -54,6 +57,7 @@ def post_for_transformation():
 
 
 def allowed_image(file):
+    """Check if image is valid with its extension and content."""
     filename = secure_filename(file.filename)
 
     if filename == '':
@@ -61,7 +65,7 @@ def allowed_image(file):
     else:
         file_ext = path.splitext(filename)[1]
         file_ext = file_ext.lower()
-        is_file_ext_allowed = file_ext in config['ALLOWED_IMAGE_EXTENSIONS']
+        is_file_ext_allowed = file_ext in current_app.config['ALLOWED_IMAGE_EXTENSIONS']
         is_image_validated = (file_ext == validate_image(file.stream))
         return is_file_ext_allowed and is_image_validated
 
@@ -71,10 +75,12 @@ def allowed_image(file):
 
 
 def allowed_style(style_name):
-    return style_name in config['NST_STYLES'].keys()
+    """Check if style is allowed by the configuration."""
+    return style_name in current_app.config['NST_STYLES'].keys()
 
 
 def serve_pil_image(pil_img):
+    """Transform PIL image into proper image file and send it."""
     img_io = BytesIO()
     pil_img.save(img_io, 'JPEG', quality=100)
     img_io.seek(0)
@@ -82,6 +88,7 @@ def serve_pil_image(pil_img):
 
 
 def validate_image(stream):
+    """Check if file stream comes from image file type."""
     header = stream.read(512)
     stream.seek(0)
     format = imghdr.what(None, header)

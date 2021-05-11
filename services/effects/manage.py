@@ -12,7 +12,7 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command()
 def test():
-    """ Runs the tests without code coverage"""
+    """Run the tests without code coverage."""
     tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
@@ -22,7 +22,7 @@ def test():
 
 @cli.command()
 def cov():
-    """Runs the unit tests with coverage."""
+    """Run the unit tests with coverage."""
     cover = coverage.coverage()
     cover.start()
     tests = unittest.TestLoader().discover('project/tests')

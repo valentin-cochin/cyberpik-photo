@@ -5,6 +5,7 @@ from project.api.effects import effects_blueprint
 
 
 def create_app(script_info=None):
+    """Create and configure the Flask app with its blueprints and shell context."""
     # instantiate the app
     app = Flask(__name__)
 
