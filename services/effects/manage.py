@@ -1,8 +1,9 @@
+# services/effects/manage.py
+
 import unittest
 
-from flask.cli import FlaskGroup
 import coverage as coverage
-
+from flask.cli import FlaskGroup
 
 from project import create_app
 

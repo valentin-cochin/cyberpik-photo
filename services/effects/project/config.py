@@ -1,3 +1,5 @@
+# services/effects/project/config.py
+
 from os import path
 
 
@@ -39,6 +41,8 @@ class DevelopmentConfig(BaseConfig):
 class TestingConfig(BaseConfig):
     """Testing configuration."""
 
+    FLASK_DEBUG = 0
+    PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
 
 

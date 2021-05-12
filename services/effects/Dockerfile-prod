@@ -22,5 +22,8 @@ COPY ./entrypoint-prod.sh /usr/src/app/entrypoint-prod.sh
 # add app
 COPY . /usr/src/app
 
+# change the permission of the bash file
+RUN chmod +x entrypoint-prod.sh
+
 # run server
-CMD ["./entrypoint-prod.sh"]
+ENTRYPOINT ["bash", "./entrypoint.sh"]
