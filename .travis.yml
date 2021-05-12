@@ -2,6 +2,10 @@ dist: focal
 
 language: python
 
+branches:
+  only:
+    - release
+
 services:
   - docker
 
@@ -18,7 +22,7 @@ before_script:
   - docker-compose -f docker-compose-dev.yml up --build -d
 
 script:
-  -  docker exec -it effects python /usr/src/app/manage.py test
+  - docker exec -it effects python /usr/src/app/manage.py test
 
 after_script:
   - docker-compose -f docker-compose-dev.yml down
