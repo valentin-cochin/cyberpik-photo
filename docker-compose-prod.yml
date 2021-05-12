@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+
+  effects:
+    container_name: effects
+    build:
+      context: ./services/effects
+      dockerfile: Dockerfile-prod
+    expose:
+      - '5000'
+    environment:
+      - APP_SETTINGS=project.config.ProductionConfig
+
+  nginx:
+    container_name: nginx
+    build: ./services/nginx
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - effects
+    links:
+      - effects

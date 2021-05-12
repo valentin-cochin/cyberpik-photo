@@ -1,5 +1,5 @@
-# services/users/project/tests/base.py
-
+from io import BytesIO
+from os import path
 
 from flask_testing import TestCase
 
@@ -14,7 +14,9 @@ class BaseTestCase(TestCase):
         return app
 
     def setUp(self):
-        pass
+        path_img_sent = path.join(self.app.config['ASSETS_DEFAULT_DIR'], 'valentin.jpg')
+        with open(path_img_sent, 'rb') as img:
+            self.img_sent_bytes = BytesIO(img.read())
 
     def tearDown(self):
         pass

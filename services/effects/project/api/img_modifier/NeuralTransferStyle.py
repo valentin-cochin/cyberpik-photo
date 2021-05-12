@@ -1,15 +1,15 @@
 import traceback
 
-import PIL
 import matplotlib.pyplot as plt
 import numpy as np
+import PIL
 import tensorflow as tf
 import tensorflow_hub as hub
 
 
 class NeuralTransferStyle:
-    """
-    A class to apply and run style transfer for a Content Image from a given Style Image
+    """A class to apply and run style transfer for a Content Image from a given Style Image.
+
     Attributes
     ----------
         model : Hub Module
@@ -20,20 +20,19 @@ class NeuralTransferStyle:
     Methods
     -------
         stylize_image(content_path,style_path) :
-            Applies Neural Style Transfer to Content Image from Style Image and Returns the Stylized Image
+            Apply Neural Style Transfer to content Image from Style Image and return the Stylized Image.
         __img_to_numpy_arr(img):
-            Converts a PIL Image to a Numpy Array suitable for Tensorflow
+            Convert a PIL Image to a Numpy Array suitable for Tensorflow.
         __load(image_path) :
-            Loads an image as a numpy array and normalizes it from the given image path
+            Load an image as a numpy array and normalizes it from the given image path.
         __resize(img, max_size):
             Resize a Numpy Array from an image according to a max size
         __show_plots():
-            Displays content, style and stylized images
+            Display content, style and stylized images
     """
 
     def __init__(self, model_path, content=None):
-        """
-        Constructs the Fast Arbitrary Image Style Transfer Model from Tensorflow Hub
+        """Construct the Fast Arbitrary Image Style Transfer Model from Tensorflow Hub.
 
         Parameters
         ----------
@@ -48,8 +47,7 @@ class NeuralTransferStyle:
         self.stylized = None
 
     def stylize_image(self, content_path=None, style_path=None, show_plots=False):
-        """
-        Applies Neural Style Transfer to Content Image from Style Image and Returns the Stylized Image
+        """Apply Neural Style Transfer to content Image from Style Image and return the Stylized Image.
 
         Parameters
         ----------
@@ -68,15 +66,19 @@ class NeuralTransferStyle:
             if self.content is None:
                 self.content = NeuralTransferStyle.__load(content_path)
             else:
-                self.content = NeuralTransferStyle.__img_to_numpy_arr(self.content)
+                self.content = NeuralTransferStyle.__img_to_numpy_arr(
+                    self.content)
                 self.content = NeuralTransferStyle.__resize(self.content, 800)
 
             img_height = self.content.shape[1]
             img_width = self.content.shape[2]
 
-            self.style = NeuralTransferStyle.__load(style_path, target_size=(img_height, img_width))
-            self.stylized = self.model(tf.image.convert_image_dtype(self.content, tf.float32),
-                                       tf.image.convert_image_dtype(self.style, tf.float32))[0]
+            self.style = NeuralTransferStyle.__load(
+                style_path, target_size=(img_height, img_width))
+            self.stylized = self.model(
+                tf.image.convert_image_dtype(self.content, tf.float32),
+                tf.image.convert_image_dtype(self.style, tf.float32)
+            )[0]
             self.__show_plots() if show_plots else None
 
             return tf.keras.preprocessing.image.array_to_img(self.stylized[0])
@@ -87,8 +89,7 @@ class NeuralTransferStyle:
 
     @staticmethod
     def __img_to_numpy_arr(img):
-        """
-        Converts a PIL Image to a Numpy Array suitable for Tensorflow
+        """Convert a PIL Image to a Numpy Array suitable for Tensorflow.
 
         Parameters
         ----------
@@ -105,8 +106,7 @@ class NeuralTransferStyle:
 
     @staticmethod
     def __load(image_path, max_size=800, target_size=None):
-        """
-        Loads an image as a numpy array and normalizes it from the given image path
+        """Load an image as a numpy array and normalizes it from the given image path.
 
         Parameters
         ----------
@@ -119,15 +119,15 @@ class NeuralTransferStyle:
         -------
             img : Numpy Array
         """
-        img = tf.keras.preprocessing.image.load_img(image_path, target_size=target_size)
+        img = tf.keras.preprocessing.image.load_img(
+            image_path, target_size=target_size)
         img = NeuralTransferStyle.__img_to_numpy_arr(img)
         img = NeuralTransferStyle.__resize(img, max_size)
         return img
 
     @staticmethod
     def __resize(img, max_size):
-        """
-        Resize a Numpy Array from an image according to a max size
+        """Resize a Numpy Array from an image according to a max size.
 
         Parameters
         ----------
@@ -156,12 +156,11 @@ class NeuralTransferStyle:
         return img
 
     def __show_plots(self):
-        """
-        Displays content, style and stylized images
+        """Display content, style and stylized images.
 
         Parameters
         ----------
-
+            None
         Returns
         -------
             None
