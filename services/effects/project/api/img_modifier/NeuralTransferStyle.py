@@ -1,3 +1,5 @@
+# services/users/project/api/effects/img_modifier/NeuralTransferStyle.py
+
 import traceback
 
 import matplotlib.pyplot as plt

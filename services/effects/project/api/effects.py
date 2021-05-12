@@ -1,3 +1,5 @@
+# services/users/project/api/effects.py
+
 import imghdr
 from io import BytesIO
 from os import path

@@ -1,3 +1,5 @@
+# services/effects/project/config.py
+
 from os import path
 
 
