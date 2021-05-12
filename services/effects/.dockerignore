@@ -1,6 +1,12 @@
 env
+htmlcov
+
 .dockerignore
+.gitattributes
 .gitignore
+.mypy_cache
+.pytest_cache
+
 Dockerfile-dev
 Dockerfile-prod
 docker-compose-dev.yml
