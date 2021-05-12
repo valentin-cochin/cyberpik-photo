@@ -1,4 +1,6 @@
-sudo: required
+dist: focal
+
+language: python
 
 services:
   - docker
