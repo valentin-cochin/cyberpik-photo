@@ -26,4 +26,4 @@ COPY . /usr/src/app
 RUN chmod +x entrypoint.sh
 
 # run server
-ENTRYPOINT ["bash", ./entrypoint.sh"]
+ENTRYPOINT ["bash", "./entrypoint.sh"]
