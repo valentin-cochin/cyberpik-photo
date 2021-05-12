@@ -25,7 +25,10 @@ def get_default():
 @effects_blueprint.route('/default', methods=['POST'])
 def post_default():
     """Return same image when '/default' route is called with HTTP POST method."""
-    uploaded_file = request.files['file']
+    uploaded_file = request.files.get('file')
+
+    if uploaded_file is None:
+        return "Invalid File", 400
 
     if allowed_image(uploaded_file):
         pil_image = Image.open(uploaded_file)
@@ -37,7 +40,11 @@ def post_default():
 @effects_blueprint.route('/', methods=['POST'])
 def post_for_transformation():
     """Return transformed image when route is called with HTTP POST method."""
-    uploaded_file = request.files['file']
+    uploaded_file = request.files.get('file')
+
+    if uploaded_file is None:
+        return "Invalid File", 400
+
     style = request.args.get('style')
 
     if allowed_image(uploaded_file):
